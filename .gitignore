@@ -7,6 +7,14 @@ x64/
 *.sdf
 *.user
 *.suo
+Lib/*.idb
+Lib/*.pdb
+Lib/*.lib
+Samples/Lobby3/*.dll
+Samples/RackspaceConsole/*.dll
+Samples/SendEmail/*.dll
+
+
 
 # Xcode and OS X 
 build/
