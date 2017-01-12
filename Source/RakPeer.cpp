@@ -426,7 +426,7 @@ StartupResult RakPeer::Startup( unsigned int maxConnections, SocketDescriptor *s
 
 	int i;
 	// Go through all socket descriptors and precreate sockets on the specified addresses
-	for (i=0; i<socketDescriptorCount; i++)
+	for (i=0; i<(int)socketDescriptorCount; i++)
 	{
 		/*
 		const char *addrToBind;
@@ -574,7 +574,7 @@ StartupResult RakPeer::Startup( unsigned int maxConnections, SocketDescriptor *s
 	}
 
 #if !defined(__native_client__) && !defined(WINDOWS_STORE_RT)
-	for (i=0; i<socketDescriptorCount; i++)
+	for (i=0; i<(int)socketDescriptorCount; i++)
 	{
 		if (socketList[i]->IsBerkleySocket())
 			((RNS2_Berkley*) socketList[i])->CreateRecvPollingThread(threadPriority);
@@ -619,7 +619,7 @@ StartupResult RakPeer::Startup( unsigned int maxConnections, SocketDescriptor *s
 
 		activeSystemList = RakNet::OP_NEW_ARRAY<RemoteSystemStruct*>(maximumNumberOfPeers, _FILE_AND_LINE_ );
 
-		for ( i = 0; i < maximumNumberOfPeers; i++ )
+		for ( i = 0; i < (int)maximumNumberOfPeers; i++ )
 		//for ( i = 0; i < remoteSystemListSize; i++ )
 		{
 			// remoteSystemList in Single thread
@@ -725,12 +725,12 @@ StartupResult RakPeer::Startup( unsigned int maxConnections, SocketDescriptor *s
 #endif // RAKPEER_USER_THREADED!=1
 	}
 
-	for (i=0; i < pluginListTS.Size(); i++)
+	for (unsigned int i=0; i < pluginListTS.Size(); i++)
 	{
 		pluginListTS[i]->OnRakPeerStartup();
 	}
 
-	for (i=0; i < pluginListNTS.Size(); i++)
+	for (unsigned int i=0; i < pluginListNTS.Size(); i++)
 	{
 		pluginListNTS[i]->OnRakPeerStartup();
 	}
@@ -5747,7 +5747,7 @@ bool RakPeer::RunUpdateCycle(BitStream &updateBitStream )
 				else
 				{
 
-					int MTUSizeIndex = rcs->requestsMade / (rcs->sendConnectionAttemptCount/NUM_MTU_SIZES);
+					int MTUSizeIndex = rcs->requestsMade / (max(1, rcs->sendConnectionAttemptCount/NUM_MTU_SIZES));
 					if (MTUSizeIndex>=NUM_MTU_SIZES)
 						MTUSizeIndex=NUM_MTU_SIZES-1;
 					rcs->requestsMade++;
