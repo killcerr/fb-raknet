@@ -5801,8 +5801,10 @@ bool RakPeer::RunUpdateCycle(BitStream &updateBitStream )
 				}
 				else
 				{
-
-					int MTUSizeIndex = rcs->requestsMade / (max(1, rcs->sendConnectionAttemptCount/NUM_MTU_SIZES));
+					int denom = rcs->sendConnectionAttemptCount / NUM_MTU_SIZES;
+					if (!denom)
+						denom = 1;
+					int MTUSizeIndex = rcs->requestsMade / denom;
 					if (MTUSizeIndex>=NUM_MTU_SIZES)
 						MTUSizeIndex=NUM_MTU_SIZES-1;
 					rcs->requestsMade++;
