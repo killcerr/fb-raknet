@@ -5908,7 +5908,7 @@ bool RakPeer::RunUpdateCycle(BitStream &updateBitStream )
 			{
 				timeNS = RakNet::GetTimeUS();
 				timeMS = (RakNet::TimeMS)(timeNS/(RakNet::TimeUS)1000);
-				//RAKNET_DEBUG_PRINTF("timeNS = %I64i timeMS=%i\n", timeNS, timeMS);
+				//RAKNET_DEBUG_PRINTF("timeNS = %llu timeMS=%i\n", timeNS, timeMS);
 			}
 
 

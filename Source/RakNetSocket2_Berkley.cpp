@@ -251,7 +251,7 @@ RNS2BindResult RNS2_Berkley::BindSharedIPV4( RNS2_BerkleyBindParameters *bindPar
 			RAKNET_DEBUG_PRINTF("bind__(): Too many symbolic links were encountered in resolving my_addr.\n"); break;
 
 		default:
-			RAKNET_DEBUG_PRINTF("Unknown bind__() error %i.\n", ret); break;
+			RAKNET_DEBUG_PRINTF("Unknown bind__() error %i; port %d.\n", ret, bindParameters->port); break;
 		}
 #endif
 	

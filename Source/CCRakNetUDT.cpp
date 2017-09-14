@@ -502,7 +502,7 @@ bool CCRakNetUDT::OnGotPacket(DatagramSequenceNumberType datagramSequenceNumber,
 	{
 		CCTimeType interval = curTime-lastPacketArrivalTime;
 
-		//		printf("Packet arrival gap is %I64u\n", (interval));
+		//		printf("Packet arrival gap is %llu\n", (interval));
 
 		if (isContinuousSend)
 		{
