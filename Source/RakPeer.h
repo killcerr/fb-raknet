@@ -19,6 +19,7 @@
 #ifndef __RAK_PEER_H
 #define __RAK_PEER_H
 
+#include <string> // Andromeda
 #include "ReliabilityLayer.h"
 #include "RakPeerInterface.h"
 #include "BitStream.h"

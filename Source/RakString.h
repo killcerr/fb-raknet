@@ -16,7 +16,7 @@
 #include "RakNetTypes.h" // int64_t
 #include <stdio.h>
 #include "stdarg.h"
-
+#include <string>
 
 #ifdef _WIN32
 
@@ -47,6 +47,7 @@ public:
 	RakString(const char *format, ...);
 	~RakString();
 	RakString( const RakString & rhs);
+	RakString(std::string &string);
 
 	/// Implicit return of const char*
 	operator const char* () const {return sharedString->c_str;}

@@ -102,6 +102,10 @@ RakString::RakString( const RakString & rhs)
 	}
 	rhs.sharedString->refCountMutex->Unlock();
 }
+RakNet::RakString::RakString(std::string& string) {
+	RakString(string.c_str());
+}
+
 RakString::~RakString()
 {
 	Free();

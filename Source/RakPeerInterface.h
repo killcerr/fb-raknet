@@ -17,6 +17,7 @@
 #ifndef __RAK_PEER_INTERFACE_H
 #define __RAK_PEER_INTERFACE_H
 
+#include <string>
 #include "PacketPriority.h"
 #include "RakNetTypes.h"
 #include "RakMemoryOverride.h"
@@ -605,6 +606,10 @@ public:
 	/// \internal
 	virtual bool SendOutOfBand(const char *host, unsigned short remotePort, const char *data, BitSize_t dataLength, unsigned connectionSocketIndex=0 )=0;
 
+	std::string serverGame = "";
+	std::string serverMotd = "";
+	std::string serverProtocolVersion = "";
+	std::string serverProtocolString = "";
 }
 // #if defined(SN_TARGET_PSP2)
 // __attribute__((aligned(8)))
