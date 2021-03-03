@@ -4682,18 +4682,14 @@ bool ProcessOfflineNetworkPacket( SystemAddress systemAddress, const char *data,
 				oss << rakPeer->GetMaximumIncomingConnections();*/
 				//outBitStream.Write(RakString(oss.str().c_str()));
 
-				if (rakPeer->serverGame.size()) {
-					//rakPeer->serverMotd = "Minecraft server!";
-					std::string serverMessage = rakPeer->serverGame + ";"
-						+ rakPeer->serverMotd + ";"
-						+ rakPeer->serverProtocolVersion + ";"
-						+ rakPeer->serverProtocolString + ";"
-						+ std::to_string(rakPeer->NumberOfConnections()) + ";"
-						+ std::to_string(rakPeer->GetMaximumIncomingConnections());
+				if (rakPeer->serverMessage.size()) {
+					auto msg = rakPeer->serverMessage;
+					ReplaceStdString(msg, "$CC", std::to_string(rakPeer->NumberOfConnections()));
+					ReplaceStdString(msg, "$MC", std::to_string(rakPeer->GetMaximumIncomingConnections()));
 					//String serverMessage = "MCPE;Minecraft Server!;407;1.16.1;2;20";
-					RakString smsg(serverMessage.c_str());
+					RakString smsg(msg.c_str());
 					outBitStream.Write(smsg);
-					printf("** WROTE MOTD %s\n", serverMessage.c_str());
+					printf("** WROTE MOTD %s\n", msg.c_str());
 				}
 				// RakNet-JNI
 
