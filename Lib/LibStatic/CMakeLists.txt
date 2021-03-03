@@ -16,13 +16,7 @@ IF(WIN32 AND NOT UNIX)
 	target_link_libraries (RakNetLibStatic ${RAKNET_LIBRARY_LIBS})
 
 	IF(NOT ${CMAKE_GENERATOR} STREQUAL "MSYS Makefiles")
-
-		IF( MSVC10 OR MSVC11 OR MSVC12 )
-			set_target_properties(RakNetLibStatic PROPERTIES STATIC_LIBRARY_FLAGS "/NODEFAULTLIB:\"LIBCD.lib LIBCMTD.lib MSVCRT.lib\"" )
-		ELSE()
-			set_target_properties(RakNetLibStatic PROPERTIES STATIC_LIBRARY_FLAGS "/NODEFAULTLIB:&quot;LIBCD.lib LIBCMTD.lib MSVCRT.lib&quot;" )
-		ENDIF()
-				
+		set_target_properties(RakNetLibStatic PROPERTIES STATIC_LIBRARY_FLAGS "/NODEFAULTLIB:\"LIBCD.lib LIBCMTD.lib MSVCRT.lib\"" )
 	ENDIF(NOT ${CMAKE_GENERATOR} STREQUAL "MSYS Makefiles")
 
 ELSE(WIN32 AND NOT UNIX)
