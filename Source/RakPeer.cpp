@@ -31,11 +31,6 @@
 // #define RMO_NEW_UNDEF_ALLOCATING_QUEUE
 // #endif
 
-#include <fstream> // Andromeda
-#include <istream> // Andromeda
-#include <iostream> // Andromeda
-#include <string> // Andromeda
-
 #include <time.h>
 #include <ctype.h> // toupper
 #include <string.h>
@@ -58,7 +53,6 @@
 #include "SuperFastHash.h"
 #include "RakAlloca.h"
 #include "WSAStartupSingleton.h"
-#include "RuntimeVars.h" // Andromeda
 
 #ifdef USE_THREADED_SEND
 #include "SendToThread.h"
@@ -2727,17 +2721,6 @@ void RakPeer::SetUnreliableTimeout(RakNet::TimeMS timeoutMS)
 	unreliableTimeout=timeoutMS;
 	for ( unsigned short i = 0; i < maximumNumberOfPeers; i++ )
 		remoteSystemList[ i ].reliabilityLayer.SetUnreliableTimeout(unreliableTimeout);
-
-
-	//// RakNet-JNI
-	DataStructures::List< RakNet::RakNetSocket2* > sockets;
-	this->GetSockets(sockets);
-	printf("Socket addresses used by RakNet:\n");
-	for (unsigned int i = 0; i < sockets.Size(); i++)
-	{
-		printf("%i. %s\n", i + 1, sockets[i]->GetBoundAddress().ToString(true));
-	}
-	////
 }
 
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -4649,9 +4632,6 @@ bool ProcessOfflineNetworkPacket( SystemAddress systemAddress, const char *data,
 			rakPeer->pluginListNTS[i]->OnDirectSocketReceive(data, length*8, systemAddress);
 
 		// These are all messages from unconnected systems.  Messages here can be any size, but are never processed from connected systems.
-		
-		//auto packetId = (DefaultMessageIDTypes)data[0];
-
 		if ( ( (unsigned char) data[ 0 ] == ID_UNCONNECTED_PING_OPEN_CONNECTIONS
 			|| (unsigned char)(data)[0] == ID_UNCONNECTED_PING)	&& length >= sizeof(unsigned char)+sizeof(RakNet::Time)+sizeof(OFFLINE_MESSAGE_DATA_ID) )
 		{
@@ -4671,27 +4651,6 @@ bool ProcessOfflineNetworkPacket( SystemAddress systemAddress, const char *data,
 				outBitStream.Write(sendPingTime);
 				outBitStream.Write(rakPeer->myGuid);
 				outBitStream.WriteAlignedBytes((const unsigned char*) OFFLINE_MESSAGE_DATA_ID, sizeof(OFFLINE_MESSAGE_DATA_ID));
-
-				// RakNet-JNI start
-				/*std::ostringstream oss;
-				oss << "MCPE;";
-				oss << rakPeer->serverMotd << ";";
-				oss << MCPE_PROTOCOL_VERSION_IDENTIFIER << ";";
-				oss << MCPE_VERSION_IDENTIFIER << ";";
-				oss << rakPeer->NumberOfConnections() << ";";
-				oss << rakPeer->GetMaximumIncomingConnections();*/
-				//outBitStream.Write(RakString(oss.str().c_str()));
-
-				if (rakPeer->serverMessage.size()) {
-					auto msg = rakPeer->serverMessage;
-					ReplaceStdString(msg, "$CC", std::to_string(rakPeer->NumberOfConnections()));
-					ReplaceStdString(msg, "$MC", std::to_string(rakPeer->GetMaximumIncomingConnections()));
-					//String serverMessage = "MCPE;Minecraft Server!;407;1.16.1;2;20";
-					RakString smsg(msg.c_str());
-					outBitStream.Write(smsg);
-					printf("** WROTE MOTD %s\n", msg.c_str());
-				}
-				// RakNet-JNI
 
 				rakPeer->rakPeerMutexes[ RakPeer::offlinePingResponse_Mutex ].Lock();
 				// They are connected, so append offline ping data
@@ -4728,7 +4687,7 @@ bool ProcessOfflineNetworkPacket( SystemAddress systemAddress, const char *data,
 			RakNet::Time ping;
 			bsIn.Read(ping);
 			bsIn.Read(packet->guid);
-
+			
 			RakNet::BitStream bsOut((unsigned char*) packet->data, packet->length, false);
 			bsOut.ResetWritePointer();
 			bsOut.Write((unsigned char)ID_UNCONNECTED_PONG);
@@ -5176,11 +5135,11 @@ bool ProcessOfflineNetworkPacket( SystemAddress systemAddress, const char *data,
 			unsigned int i;
 			//RAKNET_DEBUG_PRINTF("%i:IOCR, ", __LINE__);
 			char remoteProtocol=data[1+sizeof(OFFLINE_MESSAGE_DATA_ID)];
-			if (remoteProtocol != RakNetProtocolVersion)
+			if (remoteProtocol!=RAKNET_PROTOCOL_VERSION)
 			{
 				RakNet::BitStream bs;
 				bs.Write((MessageID)ID_INCOMPATIBLE_PROTOCOL_VERSION);
-				bs.Write((unsigned char)RakNetProtocolVersion);
+				bs.Write((unsigned char)RAKNET_PROTOCOL_VERSION);
 				bs.WriteAlignedBytes((const unsigned char*) OFFLINE_MESSAGE_DATA_ID, sizeof(OFFLINE_MESSAGE_DATA_ID));
 				bs.Write(rakPeer->GetGuidFromSystemAddress(UNASSIGNED_SYSTEM_ADDRESS));
 
@@ -5234,8 +5193,6 @@ bool ProcessOfflineNetworkPacket( SystemAddress systemAddress, const char *data,
 			bsp.data = (char*) bsOut.GetData();
 			bsp.length = bsOut.GetNumberOfBytesUsed();
 			bsp.systemAddress = systemAddress;
-			//auto pid = bsOut.GetData()[0];
-			//printf("<-Out: %d\n", pid);
 			rakNetSocket->Send(&bsp, _FILE_AND_LINE_);
 		}
 		else if ((unsigned char)(data)[0] == ID_OPEN_CONNECTION_REQUEST_2)
@@ -5800,7 +5757,7 @@ bool RakPeer::RunUpdateCycle(BitStream &updateBitStream )
 					//WriteOutOfBandHeader(&bitStream, ID_USER_PACKET_ENUM);
 					bitStream.Write((MessageID)ID_OPEN_CONNECTION_REQUEST_1);
 					bitStream.WriteAlignedBytes((const unsigned char*) OFFLINE_MESSAGE_DATA_ID, sizeof(OFFLINE_MESSAGE_DATA_ID));
-					bitStream.Write((MessageID)RakNetProtocolVersion);
+					bitStream.Write((MessageID)RAKNET_PROTOCOL_VERSION);
 					bitStream.PadWithZeroToByteLength(mtuSizes[MTUSizeIndex]-UDP_HEADER_SIZE);
 
 					char str[256];
