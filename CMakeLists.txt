@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 2.6)
 
 project(RakNet)
 
-set (CMAKE_CXX_STANDARD 17)
+set (CMAKE_CXX_STANDARD 11)
 
 if( NOT APPLE )
 # check 64 bit
