@@ -53,6 +53,9 @@
 #include "SuperFastHash.h"
 #include "RakAlloca.h"
 #include "WSAStartupSingleton.h"
+#include "RuntimeVars.h" // Andromeda
+
+#define RAKNET_PROTOCOL_VERSION RakNetProtocolVersion
 
 #ifdef USE_THREADED_SEND
 #include "SendToThread.h"
