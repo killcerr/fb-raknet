@@ -4767,9 +4767,6 @@ bool ProcessOfflineNetworkPacket( SystemAddress systemAddress, const char *data,
 			bsIn.IgnoreBytes(sizeof(OFFLINE_MESSAGE_DATA_ID));
 			RakNetGUID serverGuid;
 			bsIn.Read(serverGuid);
-			SystemAddress clientSendAddress;
-			bool b = bsIn.Read(clientSendAddress);
-			RakAssert(b);
 			unsigned char serverHasSecurity;
 			uint32_t cookie;
 			(void) cookie;
@@ -4792,12 +4789,6 @@ bool ProcessOfflineNetworkPacket( SystemAddress systemAddress, const char *data,
 			{
 				RakPeer::RequestedConnectionStruct *rcs;
 				rcs=rakPeer->requestedConnectionQueue[i];
-				// JE: Re-map connection request when packets come back from a different address (port forwarding)
-				// This happens when trying to connect to a computer on the LAN through it's internet address,
-				// router forwarding must be doing some madness so the next packet goes to the internal instead of
-				// external address!
-				if (rcs->systemAddress == clientSendAddress)
-					rcs->systemAddress = systemAddress;
 				if (rcs->systemAddress == systemAddress)
 				{
 					if (serverHasSecurity)
@@ -4913,9 +4904,6 @@ bool ProcessOfflineNetworkPacket( SystemAddress systemAddress, const char *data,
 			SystemAddress bindingAddress;
 			bool b = bs.Read(bindingAddress);
 			RakAssert(b);
-			SystemAddress clientSendAddress;
-			b = bs.Read(clientSendAddress);
-			RakAssert(b);
 			uint16_t mtu;
 			b=bs.Read(mtu);
 			RakAssert(b);
@@ -4941,10 +4929,6 @@ bool ProcessOfflineNetworkPacket( SystemAddress systemAddress, const char *data,
 			for (i=0; i <  rakPeer->requestedConnectionQueue.Size(); i++)
 			{
 				rcs=rakPeer->requestedConnectionQueue[i];
-
-				// JE: Re-map connection request when packets come back from a different address (port forwarding)
-				if (rcs->systemAddress == clientSendAddress)
-					rcs->systemAddress = systemAddress;
 
 				if (rcs->systemAddress==systemAddress)
 				{
@@ -5173,12 +5157,7 @@ bool ProcessOfflineNetworkPacket( SystemAddress systemAddress, const char *data,
 			unsigned int i;
 			//RAKNET_DEBUG_PRINTF("%i:IOCR, ", __LINE__);
 
-			RakNet::BitStream bs((unsigned char*)data, length, false);
-			bs.IgnoreBytes(sizeof(MessageID));
-			bs.IgnoreBytes(sizeof(OFFLINE_MESSAGE_DATA_ID));
-
-			char remoteProtocol;
-			bs.Read(remoteProtocol);
+			char remoteProtocol=data[1+sizeof(OFFLINE_MESSAGE_DATA_ID)];
 			if (remoteProtocol!=RAKNET_PROTOCOL_VERSION)
 			{
 				RakNet::BitStream bs;
@@ -5200,8 +5179,6 @@ bool ProcessOfflineNetworkPacket( SystemAddress systemAddress, const char *data,
 				rakNetSocket->Send(&bsp, _FILE_AND_LINE_);
 				return true;
 			}
-			SystemAddress bindingAddress;
-			bs.Read(bindingAddress);
 
 			for (i=0; i < rakPeer->pluginListNTS.Size(); i++)
 				rakPeer->pluginListNTS[i]->OnDirectSocketReceive(data, length*8, systemAddress);
@@ -5210,7 +5187,6 @@ bool ProcessOfflineNetworkPacket( SystemAddress systemAddress, const char *data,
 			bsOut.Write((MessageID)ID_OPEN_CONNECTION_REPLY_1);
 			bsOut.WriteAlignedBytes((const unsigned char*) OFFLINE_MESSAGE_DATA_ID, sizeof(OFFLINE_MESSAGE_DATA_ID));
 			bsOut.Write(rakPeer->GetGuidFromSystemAddress(UNASSIGNED_SYSTEM_ADDRESS));
-			bsOut.Write(bindingAddress);
 #if LIBCAT_SECURITY==1
 			if (rakPeer->_using_security)
 			{
@@ -5356,7 +5332,6 @@ bool ProcessOfflineNetworkPacket( SystemAddress systemAddress, const char *data,
 			bsAnswer.WriteAlignedBytes((const unsigned char*) OFFLINE_MESSAGE_DATA_ID, sizeof(OFFLINE_MESSAGE_DATA_ID));
 			bsAnswer.Write(rakPeer->GetGuidFromSystemAddress(UNASSIGNED_SYSTEM_ADDRESS));
 			bsAnswer.Write(systemAddress);
-			bsAnswer.Write(bindingAddress);
 			bsAnswer.Write(mtu);
 			bsAnswer.Write(requiresSecurityOfThisClient);
 
@@ -5818,7 +5793,6 @@ bool RakPeer::RunUpdateCycle(BitStream &updateBitStream )
 					bitStream.Write((MessageID)ID_OPEN_CONNECTION_REQUEST_1);
 					bitStream.WriteAlignedBytes((const unsigned char*) OFFLINE_MESSAGE_DATA_ID, sizeof(OFFLINE_MESSAGE_DATA_ID));
 					bitStream.Write((MessageID)RAKNET_PROTOCOL_VERSION);
-					bitStream.Write(rcs->systemAddress);
 					bitStream.PadWithZeroToByteLength(mtuSizes[MTUSizeIndex] - UDP_HEADER_SIZE);
 
 					char str[256];
