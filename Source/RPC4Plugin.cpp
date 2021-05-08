@@ -453,9 +453,9 @@ void RPC4::Signal(const char *sharedIdentifier, RakNet::BitStream *bitStream, Pa
 		//TimeUS t3 = GetTimeUS();
 		InvokeSignal(functionIndex, bsptr, &p);
 		//TimeUS t4 = GetTimeUS();
-		//printf("b1: %I64d\n", t2-t1);
-		//printf("b2: %I64d\n", t3-t2);
-		//printf("b3: %I64d\n", t4-t3);
+		//printf("b1: %lld\n", t2-t1);
+		//printf("b2: %lld\n", t3-t2);
+		//printf("b3: %lld\n", t4-t3);
 	}
 }
 void RPC4::InvokeSignal(DataStructures::HashIndex functionIndex, RakNet::BitStream *serializedParameters, Packet *packet)
@@ -490,9 +490,9 @@ void RPC4::InvokeSignal(DataStructures::HashIndex functionIndex, RakNet::BitStre
 
 	//TimeUS t4 = GetTimeUS();
 
-	//printf("b1: %I64d\n", t2-t1);
-	//printf("b2: %I64d\n", t3-t2);
-	//printf("b3: %I64d\n", t4-t3);
+	//printf("b1: %lld\n", t2-t1);
+	//printf("b2: %lld\n", t3-t2);
+	//printf("b3: %lld\n", t4-t3);
 }
 void RPC4::InterruptSignal(void)
 {

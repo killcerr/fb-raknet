@@ -48,6 +48,10 @@
 // GCC at -O3 optimization so try your options and see what's best for you
 //
 
+#ifdef __APPLE__
+#define register
+#endif
+
 //typedef unsigned int uint32;
 
 #define N        (624)       // length of state vector

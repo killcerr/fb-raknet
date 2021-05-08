@@ -1291,11 +1291,7 @@ const char *RakString::ToString(int64_t i)
 {
 	static int index=0;
 	static char buff[64][64];
-#if defined(_WIN32)
-	sprintf(buff[index], "%I64d", i);
-#else
 	sprintf(buff[index], "%lld", (long long unsigned int) i);
-#endif
 	int lastIndex=index;
 	if (++index==64)
 		index=0;
@@ -1305,11 +1301,7 @@ const char *RakString::ToString(uint64_t i)
 {
 	static int index=0;
 	static char buff[64][64];
-#if defined(_WIN32)
-	sprintf(buff[index], "%I64u", i);
-#else
 	sprintf(buff[index], "%llu", (long long unsigned int) i);
-#endif
 	int lastIndex=index;
 	if (++index==64)
 		index=0;
@@ -1381,7 +1373,7 @@ void RakString::Assign(const char *str, va_list ap)
 	if (_vsnprintf(stackBuff, 512, str, ap)!=-1
 #ifndef _WIN32
 		// Here Windows will return -1 if the string is too long; Linux just truncates the string.
-		&& strlen(str) <511
+		&& strlen(stackBuff) <511
 #endif
 		)
 	{
