@@ -22,5 +22,5 @@ jobs:
     - run: mkdir build
     - run: cmake .. -DRAKNET_ENABLE_SAMPLES=0
       working-directory: build
-    - run: make
+    - run: cmake --build .
       working-directory: build
