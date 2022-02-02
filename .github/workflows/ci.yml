@@ -21,8 +21,6 @@ jobs:
         submodules: true
     - run: mkdir build
     - run: cmake .. -DRAKNET_ENABLE_SAMPLES=0
-      with:
-        path: build
+      working-directory: build
     - run: make
-      with:
-        path: build
+      working-directory: build
