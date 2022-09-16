@@ -685,7 +685,8 @@ public:
 		// Begin Patch
 		// Permits clients with a newer RakNet protocol version to join server anyway
 		bool allowClientsWithNewerVersion = false;
-		int protocolVersion_ = RAKNET_PROTOCOL_VERSION;
+		inline void SetProtocolVersion(int version) { this->protocolVersion_ = version; }
+		inline int GetProtocolVersion() { return this->protocolVersion_; }
 		// End Patch
 #if LIBCAT_SECURITY==1
 		// Cached answer used internally by RakPeer to prevent DoS attacks based on the connexion handshake
@@ -763,6 +764,7 @@ protected:
 	// RakNet::LocklessUint32_t isRecvFromLoopThreadActive;
 
 
+	int protocolVersion_ = RAKNET_PROTOCOL_VERSION; // Andromeda
 	bool occasionalPing;  /// Do we occasionally ping the other systems?*/
 	///Store the maximum number of peers allowed to connect
 	unsigned int maximumNumberOfPeers;
