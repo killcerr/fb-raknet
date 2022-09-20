@@ -5155,11 +5155,11 @@ bool ProcessOfflineNetworkPacket( SystemAddress systemAddress, const char *data,
 			//RAKNET_DEBUG_PRINTF("%i:IOCR, ", __LINE__);
 
 			char remoteProtocol=data[1+sizeof(OFFLINE_MESSAGE_DATA_ID)];
-			if ((remoteProtocol != protocolVersion_) && !(allowClientsWithNewerVersion && (remoteProtocol < protocolVersion_)))
+			if ((remoteProtocol != rakPeer->protocolVersion_) && !(rakPeer->allowClientsWithNewerVersion && (remoteProtocol < rakPeer->protocolVersion_)))
 			{
 				RakNet::BitStream bs;
 				bs.Write((MessageID)ID_INCOMPATIBLE_PROTOCOL_VERSION);
-				bs.Write((unsigned char)protocolVersion_);
+				bs.Write((unsigned char)rakPeer->protocolVersion_);
 				bs.WriteAlignedBytes((const unsigned char*) OFFLINE_MESSAGE_DATA_ID, sizeof(OFFLINE_MESSAGE_DATA_ID));
 				bs.Write(rakPeer->GetGuidFromSystemAddress(UNASSIGNED_SYSTEM_ADDRESS));
 
