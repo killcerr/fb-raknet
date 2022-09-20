@@ -607,8 +607,8 @@ public:
 	virtual bool SendOutOfBand(const char *host, unsigned short remotePort, const char *data, BitSize_t dataLength, unsigned connectionSocketIndex=0 )=0;
 
 	// Begin Patch
-	// Permits clients with a newer RakNet protocol version to join server anyway
-	bool allowClientsWithNewerVersion = false;
+	// Permits clients with a older RakNet protocol version to join server anyway
+	bool allowClientsWithOlderVersion = false;
 	int protocolVersion_ = RAKNET_PROTOCOL_VERSION; // Andromeda
 	inline void SetProtocolVersion(int version) { this->protocolVersion_ = version; }
 	inline int GetProtocolVersion() { return this->protocolVersion_; }
