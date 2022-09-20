@@ -53,9 +53,6 @@
 #include "SuperFastHash.h"
 #include "RakAlloca.h"
 #include "WSAStartupSingleton.h"
-#include "RuntimeVars.h" // Andromeda
-
-#define RAKNET_PROTOCOL_VERSION RakNetProtocolVersion
 
 #ifdef USE_THREADED_SEND
 #include "SendToThread.h"
@@ -5158,11 +5155,11 @@ bool ProcessOfflineNetworkPacket( SystemAddress systemAddress, const char *data,
 			//RAKNET_DEBUG_PRINTF("%i:IOCR, ", __LINE__);
 
 			char remoteProtocol=data[1+sizeof(OFFLINE_MESSAGE_DATA_ID)];
-			if (remoteProtocol!=RAKNET_PROTOCOL_VERSION)
+			if ((remoteProtocol != rakPeer->protocolVersion_) && !(rakPeer->allowClientsWithNewerVersion && (remoteProtocol < rakPeer->protocolVersion_)))
 			{
 				RakNet::BitStream bs;
 				bs.Write((MessageID)ID_INCOMPATIBLE_PROTOCOL_VERSION);
-				bs.Write((unsigned char)RAKNET_PROTOCOL_VERSION);
+				bs.Write((unsigned char)rakPeer->protocolVersion_);
 				bs.WriteAlignedBytes((const unsigned char*) OFFLINE_MESSAGE_DATA_ID, sizeof(OFFLINE_MESSAGE_DATA_ID));
 				bs.Write(rakPeer->GetGuidFromSystemAddress(UNASSIGNED_SYSTEM_ADDRESS));
 
@@ -5792,7 +5789,7 @@ bool RakPeer::RunUpdateCycle(BitStream &updateBitStream )
 					//WriteOutOfBandHeader(&bitStream, ID_USER_PACKET_ENUM);
 					bitStream.Write((MessageID)ID_OPEN_CONNECTION_REQUEST_1);
 					bitStream.WriteAlignedBytes((const unsigned char*) OFFLINE_MESSAGE_DATA_ID, sizeof(OFFLINE_MESSAGE_DATA_ID));
-					bitStream.Write((MessageID)RAKNET_PROTOCOL_VERSION);
+					bitStream.Write((MessageID)protocolVersion_);
 					bitStream.PadWithZeroToByteLength(mtuSizes[MTUSizeIndex] - UDP_HEADER_SIZE);
 
 					char str[256];

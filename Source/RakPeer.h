@@ -681,7 +681,6 @@ public:
 		// Reference counted socket to send back on
 		RakNetSocket2* rakNetSocket;
 		SystemIndex remoteSystemIndex;
-
 #if LIBCAT_SECURITY==1
 		// Cached answer used internally by RakPeer to prevent DoS attacks based on the connexion handshake
 		char answer[cat::EasyHandshake::ANSWER_BYTES];
@@ -756,7 +755,6 @@ protected:
 	volatile bool isMainLoopThreadActive;
 	
 	// RakNet::LocklessUint32_t isRecvFromLoopThreadActive;
-
 
 	bool occasionalPing;  /// Do we occasionally ping the other systems?*/
 	///Store the maximum number of peers allowed to connect
