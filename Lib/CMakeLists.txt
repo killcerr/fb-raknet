@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.6)
+cmake_minimum_required(VERSION 2.6...3.21)
 
 set( RAKNET_INTERNAL_INCLUDE_DIRS 
 	${RakNet_SOURCE_DIR}/Source 
@@ -16,4 +16,4 @@ if( RAKNET_ENABLE_DLL )
 endif()
 
 FILE(GLOB ALL_HEADER_SRCS ${RakNet_SOURCE_DIR}/Source/*.h)
-INSTALL(FILES ${ALL_HEADER_SRCS} DESTINATION ${CMAKE_PREFIX_PATH}/include/raknet)
+INSTALL(FILES ${ALL_HEADER_SRCS} DESTINATION "${CMAKE_PREFIX_PATH}/include/raknet")
